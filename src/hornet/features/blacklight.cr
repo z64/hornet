@@ -32,10 +32,10 @@ module Hornet
 
   # !move <@!id>
   client.stack(:blacklight_move,
-    Flipper.new("blacklight.move"),
     DiscordMiddleware::Error.new("error: `%exception%`"),
+    DiscordMiddleware::Prefix.new("!dead"),
     DiscordMiddleware::Channel.new(type: 0_u8, guild_id: BlacklightSnowflake::Guild),
-    DiscordMiddleware::Prefix.new("!dead")) do |ctx|
+    Flipper.new("blacklight.move")) do |ctx|
     unless ctx.message.mentions.size == 1
       response_id = client.create_message(
         ctx.message.channel_id,
