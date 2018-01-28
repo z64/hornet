@@ -1,0 +1,19 @@
+name: hornet
+version: 0.1.0
+
+authors:
+  - Zac Nowicki <zachnowicki@gmail.com>
+
+targets:
+  hornet:
+    main: src/hornet.cr
+
+dependencies:
+  discordcr-middleware:
+    github: z64/discordcr-middleware
+  redisoid:
+    github: kostya/redisoid
+
+crystal: 0.24.1
+
+license: MIT

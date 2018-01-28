@@ -1,0 +1,7 @@
+/doc/
+/lib/
+/bin/
+/.shards/
+/.redis/
+
+config.yml
