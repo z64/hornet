@@ -13,13 +13,13 @@ module Hornet
     # Enable a feature
     def self.enable(name : String, id : UInt64)
       Hornet.redis.set("#{PATH}:#{name}:#{id}", 1)
-      Discord::LOGGER.info "flipper enable: #{name} #{id}"
+      Discord::LOGGER.info "[flipper enable] #{name} #{id}"
     end
 
     # Disable a feature
     def self.disable(name : String, id : UInt64)
       Hornet.redis.del("#{PATH}:#{name}:#{id}")
-      Discord::LOGGER.info "flipper disable: #{name} #{id}"
+      Discord::LOGGER.info "[flipper disable] #{name} #{id}"
     end
 
     def initialize(name : String)
