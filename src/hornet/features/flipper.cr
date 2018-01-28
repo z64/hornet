@@ -12,7 +12,7 @@ module Hornet
       next
     end
 
-    args = message.split(' ')
+    args = message.split(' ', remove_empty: true)
 
     if args.size < 4
       client.create_message(
