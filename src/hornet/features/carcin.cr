@@ -71,7 +71,6 @@ module Hornet
         },
         request.to_json)
       raise "request to carc.in failed:\n```\n#{response.inspect}\n```" unless response.success?
-      Discord::LOGGER.info response.body
       Response.from_json(response.body)
     end
   end
