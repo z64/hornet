@@ -116,7 +116,7 @@ module Hornet
         client.trigger_typing_indicator(ctx.message.channel_id)
 
         response = CaRCi.run(lang[0], lang[1], code)
-        results = unless response.stderr.empty? && response.exit_code != 0
+        results = if response.stderr.empty? && response.exit_code.zero?
                     response.stdout
                   else
                     response.stderr
