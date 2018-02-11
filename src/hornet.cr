@@ -1,11 +1,14 @@
 require "discordcr-middleware"
+require "rate_limiter"
 
 # Stock middleware used
 require "discordcr-middleware/middleware/attribute"
 require "discordcr-middleware/middleware/author"
+require "discordcr-middleware/middleware/cached_routes"
 require "discordcr-middleware/middleware/channel"
 require "discordcr-middleware/middleware/error"
 require "discordcr-middleware/middleware/prefix"
+require "discordcr-middleware/middleware/rate_limiter"
 
 require "redisoid"
 require "./hornet/*"
@@ -17,6 +20,7 @@ module Hornet
   # Discord client
   class_property client = Discord::Client.new(config.token)
   class_property cache = Discord::Cache.new(client)
+  class_property rate_limiter = RateLimiter(UInt64).new
   @@client.cache = @@cache
 
   # Handler for initial presence status
