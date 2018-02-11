@@ -5,7 +5,7 @@ module Hornet
     DiscordMiddleware::Prefix.new("flipper")) do |ctx|
     message = ctx.message.content
 
-    if message == "flipper list"
+    if message.starts_with?("flipper list")
       client.create_message(
         ctx.message.channel_id,
         "available features: ```cr\n#{Flipper.features.to_a}\n```")
