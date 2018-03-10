@@ -22,6 +22,13 @@ module Hornet
     end
 
     struct Response
+      module Sanitizer
+        def self.from_json(parser : JSON::PullParser)
+          str = parser.read_string
+          str.gsub(/\e?\[(\d+)m/, "")
+        end
+      end
+
       JSON.mapping(
         id: String,
         code: String,
@@ -30,8 +37,8 @@ module Hornet
         exit_code: Int32,
         html_url: String,
         language: String,
-        stderr: String,
-        stdout: String,
+        stderr: {type: String, converter: Sanitizer},
+        stdout: {type: String, converter: Sanitizer},
         url: String,
         version: String
       )
@@ -120,7 +127,7 @@ module Hornet
                   else
                     response.stderr
                   end
-        content = "```#{requested_lang}\n#{results}\n```"
+        content = "```\n#{results}\n```"
         content = "(output too long)" if content.size > 2000
         embed = Discord::Embed.new(
           title: "View on carc.in",

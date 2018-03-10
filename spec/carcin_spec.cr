@@ -34,5 +34,13 @@ module Hornet
         CaRCi::Response.from_json(json)
       end
     end
+
+    describe CaRCi::Response::Sanitizer do
+      it "cleans color codes from strings" do
+        parser = JSON::PullParser.new %("[1m$global_variables are not supported, use @@class_variables instead[0m")
+        result = CaRCi::Response::Sanitizer.from_json(parser)
+        result.should eq "$global_variables are not supported, use @@class_variables instead"
+      end
+    end
   end
 end
