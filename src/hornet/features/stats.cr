@@ -23,12 +23,13 @@ module Hornet
       stats_string,
       true)
 
+    total_members = cache.members.map { |_guild, members| members.size }.sum
     cache_string = String.build do |string|
       string << "```cr\n"
       string << "users:       " << cache.users.size << "\n"
       string << "channels:    " << cache.channels.size << "\n"
       string << "guilds:      " << cache.guilds.size << "\n"
-      string << "members:     " << cache.members.size << "\n"
+      string << "members:     " << total_members << "\n"
       string << "roles:       " << cache.roles.size << "\n"
       string << "dm_channels: " << cache.dm_channels.size << "\n"
       string << "```"
