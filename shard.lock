@@ -6,7 +6,7 @@ shards:
 
   discordcr-middleware:
     github: z64/discordcr-middleware
-    version: 0.3.0
+    version: 0.3.1
 
   pool:
     github: ysbaddaden/pool
