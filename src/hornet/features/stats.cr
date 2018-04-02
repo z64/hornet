@@ -1,7 +1,7 @@
 module Hornet
   rate_limiter.bucket(:stats, 3_u32, 1.minute)
 
-  client.stack(:stats,
+  client.on_message_create(
     DiscordMiddleware::Prefix.new("<@213450769276338177> \u{1f4be}"),
     DiscordMiddleware::RateLimiter.new(
       rate_limiter,
@@ -40,7 +40,7 @@ module Hornet
       true)
 
     client.create_message(
-      ctx.message.channel_id,
+      ctx.payload.channel_id,
       "**bot statistics**",
       Discord::Embed.new(fields: [stats_field, cache_field]))
   end

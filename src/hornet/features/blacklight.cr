@@ -31,25 +31,25 @@ module Hornet
   RedTick   = "<:redtick:407025904028614657>"
 
   # !move <@!id>
-  client.stack(:blacklight_move,
+  client.on_message_create(
     DiscordMiddleware::Error.new("error: `%exception%`"),
     DiscordMiddleware::Prefix.new("!dead"),
     DiscordMiddleware::Channel.new(type: 0_u8, guild_id: BlacklightSnowflake::Guild),
     Flipper.new("blacklight.move")) do |ctx|
-    unless ctx.message.mentions.size == 1
+    unless ctx.payload.mentions.size == 1
       response_id = client.create_message(
-        ctx.message.channel_id,
+        ctx.payload.channel_id,
         "wrong number of arguments. usage: `!move @mention`")
       next
     end
 
     running_member = cache.resolve_member(
       BlacklightSnowflake::Guild,
-      ctx.message.author.id)
+      ctx.payload.author.id)
 
     target_member = cache.resolve_member(
       BlacklightSnowflake::Guild,
-      ctx.message.mentions.first.id)
+      ctx.payload.mentions.first.id)
 
     response_id = if running_member.roles.any? { |id| BlacklightSnowflake::MoveRoles.includes?(id) }
                     client.modify_guild_member(
@@ -69,19 +69,19 @@ module Hornet
                     nil
                   else
                     client.create_message(
-                      ctx.message.channel_id,
+                      ctx.payload.channel_id,
                       "#{RedTick} insufficient permissions").id
                   end
 
     if response_id
       sleep 3
       client.bulk_delete_messages(
-        ctx.message.channel_id,
-        [ctx.message.id, response_id])
+        ctx.payload.channel_id,
+        [ctx.payload.id, response_id])
     else
       client.delete_message(
-        ctx.message.channel_id,
-        ctx.message.id)
+        ctx.payload.channel_id,
+        ctx.payload.id)
     end
   end
 end

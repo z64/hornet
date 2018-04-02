@@ -32,8 +32,8 @@ module Hornet
       Hornet.redis.get "#{@redis_key}:#{id}"
     end
 
-    def call(ctx, done)
-      channel = get_channel(ctx.client, ctx.message.channel_id)
+    def call(ctx : Discord::Context(Discord::Message), done)
+      channel = get_channel(ctx.client, ctx.payload.channel_id)
       if guild_id = channel.guild_id
         done.call if enabled_in?(guild_id)
       end
