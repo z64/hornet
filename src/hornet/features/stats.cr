@@ -19,11 +19,11 @@ module Hornet
     stats = GC.stats
     stats_string = String.build do |string|
       string << "```cr\n"
-      string << "heap_size:      " << stats.heap_size << "\n"
-      string << "free_bytes:     " << stats.free_bytes << "\n"
-      string << "unmapped_bytes: " << stats.unmapped_bytes << "\n"
-      string << "bytes_since_gc: " << stats.bytes_since_gc << "\n"
-      string << "total_bytes:    " << stats.total_bytes << "\n"
+      string << "heap_size:      " << (stats.heap_size / 1024.0 / 1024.0).round(2) << "MB\n"
+      string << "free_bytes:     " << (stats.free_bytes / 1024.0 / 1024.0).round(2) << "MB\n"
+      string << "unmapped_bytes: " << (stats.unmapped_bytes / 1024.0 / 1024.0).round(2) << "MB\n"
+      string << "bytes_since_gc: " << (stats.bytes_since_gc / 1024.0 / 1024.0).round(2) << "MB\n"
+      string << "total_bytes:    " << (stats.total_bytes / 1024.0 / 1024.0).round(2) << "MB\n"
       string << "```"
     end
     stats_field = Discord::EmbedField.new(
