@@ -14,6 +14,8 @@ require "redisoid"
 require "./hornet/*"
 
 module Hornet
+  START_TIME = Time.now
+
   # Config file
   class_property config = Config.from_yaml(File.read("config.yml"))
 

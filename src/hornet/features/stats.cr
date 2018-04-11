@@ -79,6 +79,8 @@ module Hornet
     client.create_message(
       ctx.payload.channel_id,
       "**bot statistics**",
-      Discord::Embed.new(fields: [stats_field, cache_field, dispatch_field]))
+      Discord::Embed.new(
+        description: "**uptime:** `#{Time.now - START_TIME}`",
+        fields: [stats_field, cache_field, dispatch_field]))
   end
 end
