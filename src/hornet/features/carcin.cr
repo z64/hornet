@@ -95,8 +95,8 @@ module Hornet
   client.on_message_create(
     DiscordMiddleware::Prefix.new("<@213450769276338177> carcin langs"),
     DiscordMiddleware::Error.new("error: %exception%"),
-    Flipper.new("carcin")) do |ctx|
-    client.trigger_typing_indicator(ctx.payload.channel_id)
+    Flipper.new("carcin")) do |payload, ctx|
+    client.trigger_typing_indicator(payload.channel_id)
 
     languages = CaRCi.languages
     reply = String.build do |str|
@@ -107,19 +107,19 @@ module Hornet
     end
 
     client.create_message(
-      ctx.payload.channel_id,
+      payload.channel_id,
       reply)
   end
 
   client.on_message_create(
     DiscordMiddleware::Prefix.new("<@213450769276338177> eval"),
     DiscordMiddleware::Error.new("error: %exception%"),
-    Flipper.new("carcin")) do |ctx|
-    if match = CODE_BLOCK.match(ctx.payload.content)
+    Flipper.new("carcin")) do |payload, ctx|
+    if match = CODE_BLOCK.match(payload.content)
       _, requested_lang, code = match
 
       if lang = LANGS[requested_lang]?
-        client.trigger_typing_indicator(ctx.payload.channel_id)
+        client.trigger_typing_indicator(payload.channel_id)
 
         response = CaRCi.run(lang[0], lang[1], code)
         results = if response.stderr.empty? && response.exit_code.zero?
@@ -134,17 +134,17 @@ module Hornet
           url: response.html_url,
           description: "#{response.language} v#{response.version} (exit code #{response.exit_code})")
         client.create_message(
-          ctx.payload.channel_id,
+          payload.channel_id,
           content,
           embed)
       else
         client.create_message(
-          ctx.payload.channel_id,
+          payload.channel_id,
           "unsupported language: `#{requested_lang}`")
       end
     else
       client.create_message(
-        ctx.payload.channel_id,
+        payload.channel_id,
         "invalid syntax, must match: `#{CODE_BLOCK.inspect}`")
     end
   end

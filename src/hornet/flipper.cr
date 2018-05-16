@@ -2,7 +2,7 @@ require "discordcr-middleware/middleware/cached_routes"
 
 module Hornet
   # Plugin for toggling features per-guild
-  class Flipper < Discord::Middleware
+  class Flipper
     include DiscordMiddleware::CachedRoutes
 
     # Redis namespace
@@ -32,10 +32,11 @@ module Hornet
       Hornet.redis.get "#{@redis_key}:#{id}"
     end
 
-    def call(ctx : Discord::Context(Discord::Message), done)
-      channel = get_channel(ctx.client, ctx.payload.channel_id)
+    def call(payload, context)
+      client = context[Discord::Client]
+      channel = get_channel(client, payload.channel_id)
       if guild_id = channel.guild_id
-        done.call if enabled_in?(guild_id)
+        yield if enabled_in?(guild_id)
       end
     end
   end

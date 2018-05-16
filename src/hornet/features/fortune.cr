@@ -8,13 +8,13 @@ module Hornet
     DiscordMiddleware::RateLimiter.new(
       rate_limiter,
       :fortune,
-      DiscordMiddleware::RateLimiterKey::ChannelID)) do |ctx|
+      DiscordMiddleware::RateLimiterKey::ChannelID)) do |payload, ctx|
     str = `/usr/games/fortune -c`
 
     cookie, _, fortune = str.split("\n", 3)
 
-    ctx.client.create_message(
-      ctx.payload.channel_id,
+    client.create_message(
+      payload.channel_id,
       "",
       Discord::Embed.new(description: fortune, title: cookie))
   end

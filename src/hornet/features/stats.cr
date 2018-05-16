@@ -15,7 +15,7 @@ module Hornet
       rate_limiter,
       :stats,
       DiscordMiddleware::RateLimiterKey::UserID),
-    Flipper.new("stats")) do |ctx|
+    Flipper.new("stats")) do |payload, ctx|
     stats = GC.stats
     stats_string = String.build do |string|
       string << "```cr\n"
@@ -77,7 +77,7 @@ module Hornet
       dispatch_string)
 
     client.create_message(
-      ctx.payload.channel_id,
+      payload.channel_id,
       "**bot statistics**",
       Discord::Embed.new(
         description: "**uptime:** `#{Time.now - START_TIME}`",
