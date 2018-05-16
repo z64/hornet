@@ -16,25 +16,23 @@ require "./hornet/*"
 module Hornet
   START_TIME = Time.now
 
-  # Config file
-  class_property config = Config.from_yaml(File.read("config.yml"))
+  {% begin %}
+    class_property config = Config.from_yaml(File.read("config.yml"))
+    class_property client = Discord::Client.new(config.token)
+    class_property cache = Discord::Cache.new(client)
+    class_property rate_limiter = RateLimiter(UInt64).new
+    class_property redis = Redisoid.new(host: "redis")
+  {% end %}
 
-  # Discord client
-  class_property client = Discord::Client.new(config.token)
-  class_property cache = Discord::Cache.new(client)
-  class_property rate_limiter = RateLimiter(UInt64).new
-  @@client.cache = @@cache
+  client.cache = cache
 
   # Handler for initial presence status
-  @@client.on_ready do
-    if string = @@config.game
+  client.on_ready do
+    if string = config.game
       game = Discord::GamePlaying.new(string, 0_i64)
-      @@client.status_update("online", game)
+      client.status_update("online", game)
     end
   end
-
-  # Redis connection
-  class_property redis = Redisoid.new(host: "redis")
 end
 
 # Load plugins
