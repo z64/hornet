@@ -1,9 +1,6 @@
 module Hornet
   rate_limiter.bucket(:stats, 3_u32, 1.minute)
 
-  # Clear data from previous session
-  redis.del("hornet:stats:dispatch")
-
   client.on_dispatch do |event|
     name, _ = event
     redis.hincrby("hornet:stats:dispatch", name, 1)

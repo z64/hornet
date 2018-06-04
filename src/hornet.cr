@@ -21,7 +21,9 @@ module Hornet
     class_property client = Discord::Client.new(config.token)
     class_property cache = Discord::Cache.new(client)
     class_property rate_limiter = RateLimiter(UInt64).new
-    class_property redis = Redisoid.new(host: "redis")
+    class_property redis do
+      Redisoid.new(host: "redis")
+    end
   {% end %}
 
   client.cache = cache
@@ -33,9 +35,15 @@ module Hornet
       client.status_update("online", game)
     end
   end
+
+  def self.run(argv : Array(String))
+    # Clear gateway stats from previous run
+    redis.del("hornet:stats:dispatch")
+
+    # Start Discord client
+    client.run
+  end
 end
 
 # Load plugins
 require "./hornet/features/*"
-
-Hornet.client.run

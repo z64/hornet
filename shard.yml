@@ -6,7 +6,7 @@ authors:
 
 targets:
   hornet:
-    main: src/hornet.cr
+    main: src/entrypoint.cr
 
 dependencies:
   discordcr-middleware:
