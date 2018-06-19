@@ -32,7 +32,7 @@ module Hornet
       JSON.mapping(
         id: String,
         code: String,
-        created_at: {type: Time, converter: Time::Format::ISO_8601_DATE_TIME},
+        created_at: Time,
         download_url: String,
         exit_code: Int32,
         html_url: String,

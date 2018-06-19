@@ -13,6 +13,9 @@ dependencies:
     github: z64/discordcr-middleware
   redisoid:
     github: kostya/redisoid
+  immix:
+    github: ysbaddaden/gc
+    branch: master
 
 crystal: 0.24.1
 

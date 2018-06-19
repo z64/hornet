@@ -2,11 +2,15 @@ version: 1.0
 shards:
   discordcr:
     github: z64/discordcr
-    commit: 6f8a8f0d3ea7c768e384a6b3c7ef72b251ff4195
+    commit: 5c722de5c25a6020466e80bc10d7904a0e30e7d5
 
   discordcr-middleware:
     github: z64/discordcr-middleware
     version: 0.4.0
+
+  immix:
+    github: ysbaddaden/gc
+    commit: e225ac51a639701d7391451247f20acb84c3abdb
 
   pool:
     github: ysbaddaden/pool
@@ -14,11 +18,11 @@ shards:
 
   rate_limiter:
     github: z64/rate_limiter
-    commit: 647361361e4332ea923779dbdc0f4145974307ba
+    commit: b9992a7c474f9f863aa34ac677244d6b520cba97
 
   redis:
     github: stefanwille/crystal-redis
-    version: 1.10.1
+    version: 1.11.0
 
   redis-reconnect:
     github: kostya/redis-reconnect

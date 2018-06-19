@@ -1,3 +1,4 @@
+require "immix"
 require "discordcr-middleware"
 require "rate_limiter"
 
@@ -28,11 +29,22 @@ module Hornet
 
   client.cache = cache
 
+  @@first_ready = true
+
   # Handler for initial presence status
   client.on_ready do
     if string = config.game
       game = Discord::GamePlaying.new(string, 0_i64)
       client.status_update("online", game)
+    elsif @@first_ready
+      @@first_ready = false
+      spawn do
+        Discord.every(5.minutes) do
+          heap = (GC.stats.heap_size / 1024.0 / 1024.0).round(2)
+          game = Discord::GamePlaying.new("#{heap}MB", 0_i64)
+          client.status_update("online", game)
+        end
+      end
     end
   end
 
