@@ -11,11 +11,9 @@ targets:
 dependencies:
   discordcr-middleware:
     github: z64/discordcr-middleware
+    branch: master
   redisoid:
     github: kostya/redisoid
-  immix:
-    github: ysbaddaden/gc
-    branch: master
 
 crystal: 0.24.1
 

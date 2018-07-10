@@ -7,6 +7,6 @@ RUN mkdir /opt/hornet
 WORKDIR /opt/hornet
 
 ADD . /opt/hornet
-RUN shards build --release -Dgc_none
+RUN shards build --release
 
 CMD bin/hornet

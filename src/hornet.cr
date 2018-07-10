@@ -1,4 +1,3 @@
-require "immix"
 require "discordcr-middleware"
 require "rate_limiter"
 
@@ -19,9 +18,10 @@ module Hornet
 
   {% begin %}
     class_property config = Config.from_yaml(File.read("config.yml"))
-    class_property client = Discord::Client.new(config.token)
+    class_property logger = Logger.new(STDOUT)
+    class_property client = Discord::Client.new(config.token, logger: logger)
     class_property cache = Discord::Cache.new(client)
-    class_property rate_limiter = RateLimiter(UInt64).new
+    class_property rate_limiter = RateLimiter(Discord::Snowflake).new
     class_property redis do
       Redisoid.new(host: "redis")
     end

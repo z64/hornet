@@ -11,15 +11,15 @@ module Hornet
     class_property features = Set(String).new
 
     # Enable a feature
-    def self.enable(name : String, id : UInt64)
+    def self.enable(name : String, id : Discord::Snowflake | UInt64)
       Hornet.redis.set("#{PATH}:#{name}:#{id}", 1)
-      Discord::LOGGER.info "[flipper enable] #{name} #{id}"
+      Hornet.logger.info "[flipper enable] #{name} #{id}"
     end
 
     # Disable a feature
-    def self.disable(name : String, id : UInt64)
+    def self.disable(name : String, id : Discord::Snowflake | UInt64)
       Hornet.redis.del("#{PATH}:#{name}:#{id}")
-      Discord::LOGGER.info "[flipper disable] #{name} #{id}"
+      Hornet.logger.info "[flipper disable] #{name} #{id}"
     end
 
     def initialize(name : String)
@@ -28,7 +28,7 @@ module Hornet
     end
 
     # Check whether this feature is enabled for a particular guild ID
-    def enabled_in?(id : UInt64)
+    def enabled_in?(id : Discord::Snowflake | UInt64)
       Hornet.redis.get "#{@redis_key}:#{id}"
     end
 

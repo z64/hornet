@@ -1,16 +1,12 @@
 version: 1.0
 shards:
   discordcr:
-    github: z64/discordcr
-    commit: 5c722de5c25a6020466e80bc10d7904a0e30e7d5
+    github: meew0/discordcr
+    commit: 1640326daf746ab662e1dc29788f66fe5383e0cf
 
   discordcr-middleware:
     github: z64/discordcr-middleware
-    version: 0.4.0
-
-  immix:
-    github: ysbaddaden/gc
-    commit: e225ac51a639701d7391451247f20acb84c3abdb
+    commit: 3456d14aedcf9ff9038eb7ac57a4a06f8fd5e75e
 
   pool:
     github: ysbaddaden/pool
@@ -26,9 +22,9 @@ shards:
 
   redis-reconnect:
     github: kostya/redis-reconnect
-    version: 0.2
+    version: 0.3
 
   redisoid:
     github: kostya/redisoid
-    version: 0.2
+    version: 0.3
 
