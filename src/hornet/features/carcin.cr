@@ -93,8 +93,8 @@ module Hornet
   CODE_BLOCK = /```([a-zA-Z]+)\n([\s\S]+?)```/i
 
   LANGS = {
-    "crystal" => {"crystal", "0.25.0"},
-    "cr"      => {"crystal", "0.25.0"},
+    "crystal" => {"crystal", "0.25.1"},
+    "cr"      => {"crystal", "0.25.1"},
     "ruby"    => {"ruby", "2.4.1"},
     "rb"      => {"ruby", "2.4.1"},
     "c"       => {"gcc", "6.3.1"},
