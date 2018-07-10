@@ -2,26 +2,29 @@ module Hornet
   module CaRCi
     CARCIN_URL = "https://carc.in"
 
-    struct Language
-      JSON.mapping(id: String, name: String, versions: Array(String))
+    record Language, id : String, name : String, versions : Array(String) do
+      include JSON::Serializable
     end
 
-    struct RunRequest
-      JSON.mapping(language: String, version: String, code: String)
-
-      def initialize(@language : String, @version : String, @code : String)
-      end
+    record RunRequest, language : String, version : String, code : String do
+      include JSON::Serializable
 
       def to_json(builder : JSON::Builder)
         builder.object do
           builder.field("run_request") do
-            previous_def(builder)
+            builder.object do
+              builder.field("language", language)
+              builder.field("version", version)
+              builder.field("code", code)
+            end
           end
         end
       end
     end
 
     struct Response
+      include JSON::Serializable
+
       module Sanitizer
         def self.from_json(parser : JSON::PullParser)
           str = parser.read_string
@@ -29,26 +32,31 @@ module Hornet
         end
       end
 
-      JSON.mapping(
-        id: String,
-        code: String,
-        created_at: Time,
-        download_url: String,
-        exit_code: Int32,
-        html_url: String,
-        language: String,
-        stderr: {type: String, converter: Sanitizer},
-        stdout: {type: String, converter: Sanitizer},
-        url: String,
-        version: String
-      )
+      getter id : String
+      getter code : String
+      getter created_at : Time
+      getter download_url : String
+      getter exit_code : Int32
+      getter html_url : String
+      getter language : String
 
-      def initialize(parser : JSON::PullParser)
+      @[JSON::Field(converter: Hornet::CaRCi::Response::Sanitizer)]
+      getter stderr : String
+
+      @[JSON::Field(converter: Hornet::CaRCi::Response::Sanitizer)]
+      getter stdout : String
+
+      getter url : String
+      getter version : String
+
+      def self.from_json(string_or_io : String | IO)
+        parser = JSON::PullParser.new(string_or_io)
         parser.on_key("run_request") do
           parser.on_key("run") do
-            return previous_def(parser)
+            return new(parser)
           end
         end
+        raise "Failed to parse response: #{string_or_io}"
       end
     end
 

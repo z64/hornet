@@ -33,6 +33,13 @@ module Hornet
           JSON
         CaRCi::Response.from_json(json)
       end
+
+      it "raises with an unknown structure" do
+        unknown = %({"foo":"bar"})
+        expect_raises(Exception, "Failed to parse response: {\"foo\":\"bar\"}") do
+          CaRCi::Response.from_json(unknown)
+        end
+      end
     end
 
     describe CaRCi::Response::Sanitizer do
