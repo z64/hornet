@@ -2,11 +2,11 @@ version: 1.0
 shards:
   discordcr:
     github: meew0/discordcr
-    commit: 1640326daf746ab662e1dc29788f66fe5383e0cf
+    commit: ef2b4bab2e701bc42bdf37f1db432e31d1734294
 
   discordcr-middleware:
     github: z64/discordcr-middleware
-    commit: 3456d14aedcf9ff9038eb7ac57a4a06f8fd5e75e
+    commit: dff0bcf5aa75dfda5ba1d4cf829174293418d83a
 
   pool:
     github: ysbaddaden/pool
