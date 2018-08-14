@@ -1,0 +1,24 @@
+name: hornet
+version: 0.1.0
+
+authors:
+  - Zac Nowicki <zachnowicki@gmail.com>
+
+dependencies:
+  discordcr-plugin:
+    github: z64/discordcr-plugin
+    branch: master
+  pg:
+    github: will/crystal-pg
+  micrate:
+    github: amberframework/micrate
+
+targets:
+  micrate:
+    main: db/micrate.cr
+  hornet:
+    main: src/entrypoint.cr
+
+crystal: 0.25.0
+
+license: MIT

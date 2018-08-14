@@ -1,0 +1,30 @@
+version: 1.0
+shards:
+  db:
+    github: crystal-lang/crystal-db
+    version: 0.5.0
+
+  discordcr:
+    github: meew0/discordcr
+    commit: 27ba66ac2a693b99f40720ccde6e10587e1895b4
+
+  discordcr-middleware:
+    github: z64/discordcr-middleware
+    commit: 562d68698114473465793112fee98ce12fa2a5ca
+
+  discordcr-plugin:
+    github: z64/discordcr-plugin
+    commit: 8be4b836bed2a13a55da7138d47d7cb28248e7ba
+
+  micrate:
+    github: amberframework/micrate
+    version: 0.3.3
+
+  pg:
+    github: will/crystal-pg
+    version: 0.15.0
+
+  rate_limiter:
+    github: z64/rate_limiter
+    commit: b9992a7c474f9f863aa34ac677244d6b520cba97
+
