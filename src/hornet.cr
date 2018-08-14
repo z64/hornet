@@ -1,4 +1,9 @@
 require "discordcr-plugin"
+require "discordcr-middleware/middleware/prefix"
+require "discordcr-middleware/middleware/cached_routes"
+require "discordcr-middleware/middleware/error"
+require "discordcr-middleware/middleware/attribute"
+require "discordcr-middleware/middleware/author"
 require "pg"
 
 require "./database/*"
@@ -25,7 +30,8 @@ module Hornet
     end
   end
 
-  DB = PG.connect(ENV["HORNET_DB_URL"])
+  OWNER_ID = 120571255635181568_u64
+  DB       = PG.connect(ENV["HORNET_DB_URL"])
 
   def self.run(argv : Array(String))
     shard = Shard.new
