@@ -2,6 +2,7 @@ require "spec"
 require "../src/hornet"
 
 record MessageStub, channel_id : UInt64, content : String
+record MessageWithEmbedStub, channel_id : UInt64, content : String, embed : Discord::Embed
 
 class MockClient
   def on_message_create(&block : MessageStub ->)
@@ -14,5 +15,9 @@ class MockClient
 
   def create_message(channel_id : UInt64, content : String)
     MessageStub.new(channel_id, content)
+  end
+
+  def create_message(channel_id : UInt64, content : String, embed : Discord::Embed)
+    MessageWithEmbedStub.new(channel_id, content, embed)
   end
 end
