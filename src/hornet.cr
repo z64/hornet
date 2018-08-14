@@ -30,8 +30,9 @@ module Hornet
     end
   end
 
-  OWNER_ID = 120571255635181568_u64
-  DB       = PG.connect(ENV["HORNET_DB_URL"])
+  OWNER_ID  = 120571255635181568_u64
+  CLIENT_ID = 213450769276338177_u64
+  DB        = PG.connect(ENV["HORNET_DB_URL"])
 
   def self.run(argv : Array(String))
     shard = Shard.new
