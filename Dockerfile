@@ -1,9 +1,7 @@
-FROM durosoft/crystal-alpine:latest
+FROM jrei/crystal-alpine
 
 RUN mkdir /app
-WORKDIR /app
+COPY . /app
+RUN cd /app && shards build
 
-ADD . /app
-RUN shards build --release
-
-CMD bin/hornet
+ENTRYPOINT /app/bin/hornet
