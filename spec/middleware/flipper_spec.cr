@@ -10,14 +10,13 @@ describe Hornet::Flipper do
 
   it "enables features per guild" do
     Hornet::Flipper.enable("foo", 1)
-    Hornet::Flipper.store[{"foo", 1}].should eq true
-    Hornet::Flipper.store[{"foo", 2}]?.should eq nil
+    result = Hornet::FlipperSettings.get("foo", 1)
+    result.not_nil!.enabled.should be_true
   end
 
   it "disables features per guild" do
     Hornet::Flipper.disable("foo", 1)
-    Hornet::Flipper.enable("foo", 3)
-    Hornet::Flipper.store[{"foo", 1}].should eq false
-    Hornet::Flipper.store[{"foo", 3}]?.should eq true
+    result = Hornet::FlipperSettings.get("foo", 1)
+    result.not_nil!.enabled.should be_false
   end
 end
