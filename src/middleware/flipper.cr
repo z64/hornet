@@ -18,8 +18,7 @@ class Hornet::Flipper
   def call(payload, ctx)
     client = ctx[Discord::Client]
     if guild_id = get_channel(client, payload.channel_id).guild_id
-      enabled = FlipperSettings.get(@name, guild_id) || false
-      yield if enabled
+      yield if FlipperSettings.get(@name, guild_id).try &.enabled
     end
   end
 end
