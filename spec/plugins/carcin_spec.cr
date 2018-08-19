@@ -200,5 +200,6 @@ describe Hornet::CARCIN do
     command = MessageStub.new(1, "foo")
     response = plugin.handle(command, :ctx)
     expected = MessageStub.new(1, "invalid syntax, must match: `#{Hornet::CARCIN::CODE_BLOCK}`")
+    response.should eq expected
   end
 end
