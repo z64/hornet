@@ -19,6 +19,7 @@ class Hornet::FlipperManager
 
   def features
     @last_call = :list
+    ["foo", "bar"]
   end
 end
 
@@ -44,7 +45,7 @@ describe Hornet::FlipperManager do
     expected = <<-MESSAGE
       available features:
       ```cr
-      list
+      #{plugin.features}
       ```
       MESSAGE
     plugin.handle(command, :ctx).should eq MessageStub.new(2, expected)
@@ -63,5 +64,11 @@ describe Hornet::FlipperManager do
     expected = "disabled `foo` in `123`"
     plugin.handle(command, :ctx).should eq MessageStub.new(4, expected)
     plugin.last_call.should eq({:disable, "foo", 123_u64})
+  end
+
+  it "doesn't process unknown features" do
+    command = MessageStub.new(5, "flipper enable doesnt_exist 1234")
+    expected = "unknown feature: `doesnt_exist`"
+    plugin.handle(command, :ctx).should eq MessageStub.new(5, expected)
   end
 end
