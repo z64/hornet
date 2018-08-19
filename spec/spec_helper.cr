@@ -28,4 +28,7 @@ class MockClient
   def create_message(channel_id : UInt64, content : String, embed : Discord::Embed)
     MessageWithEmbedStub.new(channel_id, content, embed)
   end
+
+  def trigger_typing_indicator(channel_id : UInt64)
+  end
 end
