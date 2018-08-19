@@ -51,7 +51,7 @@ class Hornet::CARCIN
     else
       client.create_message(
         payload.channel_id,
-        "invalid syntax, must match: #{CODE_BLOCK}")
+        "invalid syntax, must match: `#{CODE_BLOCK}`")
     end
   end
 
