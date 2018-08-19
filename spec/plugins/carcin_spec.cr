@@ -71,7 +71,6 @@ describe Hornet::CARCIN do
 
   it "#parse_request" do
     valid_request = <<-MESSAGE
-      <@#{Hornet::CLIENT_ID}> eval
       ```cr
       foo
       ```
@@ -79,7 +78,6 @@ describe Hornet::CARCIN do
     plugin.parse_request?(valid_request).should eq({Hornet::CARCIN::LANGS["cr"], "foo\n"})
 
     unknown_lang = <<-MESSAGE
-      <@#{Hornet::CLIENT_ID}> eval
       ```lua
       foo
       ```
