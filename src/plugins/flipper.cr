@@ -27,6 +27,14 @@ class Hornet::FlipperManager
     end
 
     _, action, name, guild_id = args
+
+    unless features.includes?(name)
+      reply = client.create_message(
+        payload.channel_id,
+        "unknown feature: `#{name}`")
+      return reply
+    end
+
     guild_id = guild_id.to_u64
     reply = case action
             when "enable"
