@@ -93,8 +93,8 @@ class Hornet::PagedMessage
       first_page.embed)
     controller.message_id = host_message.id
 
-    client.create_reaction(channel_id, host_message.id, NEXT_PAGE_EMOJI)
     client.create_reaction(channel_id, host_message.id, PREVIOUS_PAGE_EMOJI)
+    client.create_reaction(channel_id, host_message.id, NEXT_PAGE_EMOJI)
 
     @controllers.push(controller)
     @controllers.pop if @controllers.size > MAX_CONTROLLERS
