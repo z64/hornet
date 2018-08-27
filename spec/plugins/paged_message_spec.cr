@@ -17,26 +17,24 @@ describe Hornet::PagedMessage::Controller do
       data[index]?
     end
 
-    data.each do |page|
-      controller.next_page.should eq page
-    end
-
+    controller.current_page.should eq data[0]
+    controller.next_page.should eq data[1]
+    controller.next_page.should eq data[2]
     controller.next_page.should be_nil
   end
 
   it "#previous_page" do
     controller = Hornet::PagedMessage::Controller.new(1, 2, 3) do |index|
-      data[index]
+      data[index]?
     end
 
     # TODO: another spec
     controller.previous_page.should eq data[0]
     controller.previous_page.should eq data[0]
 
-    3.times { controller.next_page }
-    data.reverse_each do |page|
-      controller.previous_page.should eq page
-    end
+    2.times { controller.next_page }
+    controller.previous_page.should eq data[1]
+    controller.previous_page.should eq data[0]
   end
 end
 
@@ -57,12 +55,12 @@ describe Hornet::PagedMessage do
       }
 
       controller = Hornet::PagedMessage::Controller.new(1, 2, 3) do |index|
-        data[index]
+        data[index]?
       end
 
       plugin.controllers.push(controller)
 
-      data.each do |page|
+      {data[1], data[2]}.each do |page|
         payload = MessageReactionStub.new(1, 2, 3, next_emoji)
         expected = MessageStub.new(1, page.content, nil)
         result = plugin.handle(payload)
@@ -80,13 +78,13 @@ describe Hornet::PagedMessage do
       }
 
       controller = Hornet::PagedMessage::Controller.new(1, 2, 3) do |index|
-        data[index]
+        data[index]?
       end
 
       plugin.controllers.push(controller)
-      3.times { controller.next_page }
+      2.times { controller.next_page }
 
-      data.reverse_each do |page|
+      {data[1], data[0]}.each do |page|
         payload = MessageReactionStub.new(1, 2, 3, previous_emoji)
         expected = MessageStub.new(1, page.content, nil)
         result = plugin.handle(payload)

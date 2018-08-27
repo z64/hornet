@@ -14,18 +14,26 @@ class Hornet::PagedMessage
                    @message_id : UInt64 | Discord::Snowflake? = nil,
                    &@block : Int32 -> Page?)
       @index = 0
-      @pages = Array(Page).new
+      @pages = Array(Page).new(1) do
+        @block.call(0) || raise "First page in controller cannot return `nil`"
+      end
+    end
+
+    def current_page
+      @pages[@index]
     end
 
     def next_page
+      @index += 1
       if page = @pages[@index]?
-        @index += 1
         page
       else
         if page = @block.call(@index)
-          @index += 1
           @pages << page
           page
+        else
+          @index = @pages.size - 1
+          nil
         end
       end
     end
@@ -79,7 +87,7 @@ class Hornet::PagedMessage
                           user_id : UInt64 | Discord::Snowflake,
                           &block : Int32 -> Page?)
     controller = Controller.new(channel_id, user_id, &block)
-    first_page = controller.next_page.not_nil!
+    first_page = controller.current_page
     host_message = client.create_message(channel_id,
       first_page.content,
       first_page.embed)
