@@ -118,7 +118,7 @@ describe Hornet::CARCIN do
       title: "View on carc.in",
       url: "html url",
       footer: Discord::EmbedFooter.new(text: "language version (exit code 0)"))
-    expected = MessageWithEmbedStub.new(1, <<-MESSAGE, expected_embed)
+    expected = MessageStub.new(1, <<-MESSAGE, expected_embed)
       ```
       stdout
       ```
@@ -143,7 +143,7 @@ describe Hornet::CARCIN do
       title: "View on carc.in",
       url: "html url",
       footer: Discord::EmbedFooter.new(text: "language version (exit code 1)"))
-    expected = MessageWithEmbedStub.new(1, <<-MESSAGE, expected_embed)
+    expected = MessageStub.new(1, <<-MESSAGE, expected_embed)
       ```
       stderr
       ```
@@ -169,7 +169,7 @@ describe Hornet::CARCIN do
       title: "View on carc.in",
       url: "html url",
       footer: Discord::EmbedFooter.new(text: "language version (exit code 1)"))
-    expected = MessageWithEmbedStub.new(1, <<-MESSAGE, expected_embed)
+    expected = MessageStub.new(1, <<-MESSAGE, expected_embed)
       **stdout**
       ```
       stdout

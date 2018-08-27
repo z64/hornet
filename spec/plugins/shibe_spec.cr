@@ -22,7 +22,7 @@ describe Hornet::Shibe do
   it "responds with the next URL" do
     {"foo", "bar", "fizz", "buzz"}.each do |expected|
       response = plugin.handle(MessageStub.new(1, "message"), :ctx)
-      response.embed.image.try &.url.should eq expected
+      response.embed.try &.image.try &.url.should eq expected
     end
 
     expect_raises(Exception) do
