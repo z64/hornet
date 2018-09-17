@@ -14,7 +14,7 @@ shards:
 
   discordcr-plugin:
     github: z64/discordcr-plugin
-    commit: 8be4b836bed2a13a55da7138d47d7cb28248e7ba
+    commit: e6b45f633f3dc330053a7cc87c12a2da9c42c085
 
   micrate:
     github: amberframework/micrate
