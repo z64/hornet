@@ -54,4 +54,8 @@ module Hornet
     end
     file.close
   end
+
+  def self.get_plugin(klass : T.class) forall T
+    Discord::Plugin.plugin_instances[klass]
+  end
 end
