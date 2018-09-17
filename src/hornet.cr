@@ -43,13 +43,14 @@ module Hornet
     file = File.open("config.json", "r")
     parser = JSON::PullParser.new(file)
     parser.read_object do |key|
+      matched = false
       Discord::Plugin.plugins.each do |plugin|
         if plugin.class.to_s.underscore == key
           plugin.configure(parser)
-        else
-          parser.skip
+          matched = true
         end
       end
+      parser.skip unless matched
     end
     file.close
   end
