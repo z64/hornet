@@ -1,4 +1,4 @@
-require "./spec_helper"
+require "../spec_helper"
 
 describe StaticRingBuffer do
   it "acts as a fixed size ring buffer" do
