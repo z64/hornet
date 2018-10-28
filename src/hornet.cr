@@ -6,7 +6,7 @@ require "discordcr-middleware/middleware/attribute"
 require "discordcr-middleware/middleware/author"
 require "pg"
 
-require "./static_ring_buffer"
+require "./utils/*"
 require "./database/*"
 require "./middleware/*"
 require "./plugins/*"
