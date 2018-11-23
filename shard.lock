@@ -2,11 +2,11 @@ version: 1.0
 shards:
   db:
     github: crystal-lang/crystal-db
-    version: 0.5.0
+    version: 0.5.1
 
   discordcr:
     github: meew0/discordcr
-    commit: 27ba66ac2a693b99f40720ccde6e10587e1895b4
+    commit: a1325222e43b907e74920bb3ca2299ba27fef871
 
   discordcr-middleware:
     github: z64/discordcr-middleware
@@ -14,7 +14,7 @@ shards:
 
   discordcr-plugin:
     github: z64/discordcr-plugin
-    commit: d9d65887e91a979c4bf46ce466da9cbfea4b4c9c
+    commit: a34dacfd56f5b1dd1d54e64ec4d787bed5f57dd3
 
   micrate:
     github: amberframework/micrate
