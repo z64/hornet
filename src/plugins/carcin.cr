@@ -81,8 +81,8 @@ class Hornet::CARCIN
   }
 
   LANGS = {
-    "crystal" => {"crystal", "0.26.0"},
-    "cr"      => {"crystal", "0.26.0"},
+    "crystal" => {"crystal", "0.27.0"},
+    "cr"      => {"crystal", "0.27.0"},
     "ruby"    => {"ruby", "2.4.1"},
     "rb"      => {"ruby", "2.4.1"},
     "c"       => {"gcc", "6.3.1"},
