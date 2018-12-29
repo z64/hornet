@@ -1,0 +1,28 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: crystallang/crystal:latest
+      - image: postgres:11-alpine
+    environment:
+      HORNET_DB_URL: postgres://postgres@localhost:5432
+    steps:
+      - run: crystal --version
+      - checkout
+      - run: shards
+      - run:
+          name: Running Crystal formatter
+          command: crystal tool format --check
+      - run:
+          name: Running Crystal specs
+          command: crystal spec
+      - run:
+          name: Ensure bot compiles
+          command: shards build hornet --no-codegen
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - test
