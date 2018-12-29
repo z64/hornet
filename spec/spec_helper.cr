@@ -1,6 +1,9 @@
 require "spec"
 require "../src/hornet"
 
+Micrate::DB.connection_url = ENV["HORNET_DB_URL"]
+Micrate.up(Hornet::DB, "src/database/migrations")
+
 record MessageStub, channel_id : UInt64, content : String
 record MessageWithEmbedStub, channel_id : UInt64, content : String, embed : Discord::Embed
 

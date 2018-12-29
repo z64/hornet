@@ -12,10 +12,11 @@ dependencies:
     github: will/crystal-pg
   micrate:
     github: amberframework/micrate
+    commit: 8e7ce6f05536d343950023b2cb26cb3983ae0944
 
 targets:
   micrate:
-    main: db/micrate.cr
+    main: src/micrate.cr
   hornet:
     main: src/entrypoint.cr
 

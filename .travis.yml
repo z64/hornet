@@ -9,8 +9,6 @@ env:
 script:
   - bash .travis/install-postgres-10.sh
   - psql -c 'create database hornet_test;' -U postgres
-  - shards build micrate
-  - bin/micrate up
   - crystal tool format --check src spec db
   - crystal spec
   - shards build hornet --no-codegen

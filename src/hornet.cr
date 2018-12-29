@@ -5,6 +5,7 @@ require "discordcr-middleware/middleware/error"
 require "discordcr-middleware/middleware/attribute"
 require "discordcr-middleware/middleware/author"
 require "pg"
+require "micrate"
 
 require "./utils/*"
 require "./database/*"
@@ -36,12 +37,19 @@ module Hornet
   DB        = PG.connect(ENV["HORNET_DB_URL"])
 
   def self.run(argv : Array(String))
-    shard = Shard.new
-    shard.run
+    if File.exists?("config.json")
+      File.open("config.json", "r") do |file|
+        configure_plugins(file)
+      end
+    end
+
+    Micrate::DB.connection_url = ENV["HORNET_DB_URL"]
+    Micrate.up(DB, "src/database/migrations")
+
+    Shard.new.run
   end
 
-  def self.configure_plugins
-    file = File.open("config.json", "r")
+  def self.configure_plugins(file : File)
     parser = JSON::PullParser.new(file)
     parser.read_object do |key|
       matched = false
@@ -53,7 +61,6 @@ module Hornet
       end
       parser.skip unless matched
     end
-    file.close
   end
 
   def self.get_plugin(klass : T.class) forall T

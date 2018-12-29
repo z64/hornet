@@ -6,11 +6,11 @@ shards:
 
   discordcr:
     github: meew0/discordcr
-    commit: a1325222e43b907e74920bb3ca2299ba27fef871
+    commit: 1d40f5fa0c9069a817ddbb3daf26782607d69d7d
 
   discordcr-middleware:
     github: z64/discordcr-middleware
-    commit: 562d68698114473465793112fee98ce12fa2a5ca
+    commit: 1606ec9a61aa8aa1c04810227fd796807f8ffb93
 
   discordcr-plugin:
     github: z64/discordcr-plugin
@@ -18,7 +18,7 @@ shards:
 
   micrate:
     github: amberframework/micrate
-    version: 0.3.3
+    commit: 8e7ce6f05536d343950023b2cb26cb3983ae0944
 
   pg:
     github: will/crystal-pg
