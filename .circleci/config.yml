@@ -1,5 +1,16 @@
 version: 2
 
+dry:
+  restore_shards_cache: &restore_shards_cache
+    keys:
+      - shards-cache-v1-{{ .Branch }}-{{ checksum "shard.lock" }}
+      - shards-cache-v1-{{ .Branch }}
+      - shards-cache-v1
+  save_shards_cache: &save_shards_cache
+    key: shards-cache-v1-{{ .Branch }}-{{ checksum "shard.lock" }}
+    paths:
+      - ./shards-cache
+
 jobs:
   test:
     docker:
@@ -7,10 +18,13 @@ jobs:
       - image: postgres:11-alpine
     environment:
       HORNET_DB_URL: postgres://postgres@localhost:5432
+      SHARDS_CACHE_PATH: ./shards-cache
     steps:
       - run: crystal --version
       - checkout
+      - restore_cache: *restore_shards_cache
       - run: shards
+      - save_cache: *save_shards_cache
       - run:
           name: Running Crystal formatter
           command: crystal tool format --check
