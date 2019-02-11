@@ -1,7 +1,7 @@
 require "../spec_helper"
 
-alias FlipCall = {Symbol, String, UInt64}
-alias ListCall = Symbol
+private alias FlipCall = {Symbol, String, Discord::Snowflake}
+private alias ListCall = Symbol
 
 @[Discord::Plugin::Options(client_class: MockClient, middleware: true)]
 class Hornet::FlipperManager
@@ -28,47 +28,39 @@ describe Hornet::FlipperManager do
   plugin = Hornet::FlipperManager.new
   plugin.register_on(client)
 
-  it "responds with insufficient arguments" do
-    command = MessageStub.new(1, "flipper")
-    expected = "insufficient arguments (`action`, `name`, `id`)"
-    plugin.handle(command, :ctx).should eq MessageStub.new(1, expected)
-  end
-
-  it "responds to unknown subcommand" do
-    command = MessageStub.new(2, "flipper foo bar 1234")
-    expected = "unknown flipper command: `foo`"
-    plugin.handle(command, :ctx).should eq MessageStub.new(2, expected)
-  end
-
-  it "responds with features" do
-    command = MessageStub.new(2, "flipper list")
+  it "lists features" do
+    payload = MessageStub.new(2, "flipper list")
+    ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("flipper"))}
     expected = <<-MESSAGE
       available features:
       ```cr
       #{plugin.features}
       ```
       MESSAGE
-    plugin.handle(command, :ctx).should eq MessageStub.new(2, expected)
+    plugin.handle(payload, ctx).should eq MessageStub.new(2, expected)
     plugin.last_call.should eq :list
   end
 
   it "enables features" do
-    command = MessageStub.new(3, "flipper enable foo 123")
+    payload = MessageStub.new(3, "flipper enable foo 123")
+    ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("flipper"))}
     expected = "enabled `foo` in `123`"
-    plugin.handle(command, :ctx).should eq MessageStub.new(3, expected)
+    plugin.handle(payload, ctx).should eq MessageStub.new(3, expected)
     plugin.last_call.should eq({:enable, "foo", 123_u64})
   end
 
   it "disables features" do
-    command = MessageStub.new(4, "flipper disable foo 123")
+    payload = MessageStub.new(4, "flipper disable foo 123")
+    ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("flipper"))}
     expected = "disabled `foo` in `123`"
-    plugin.handle(command, :ctx).should eq MessageStub.new(4, expected)
+    plugin.handle(payload, ctx).should eq MessageStub.new(4, expected)
     plugin.last_call.should eq({:disable, "foo", 123_u64})
   end
 
   it "doesn't process unknown features" do
-    command = MessageStub.new(5, "flipper enable doesnt_exist 1234")
+    payload = MessageStub.new(5, "flipper enable doesnt_exist 1234")
+    ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("flipper"))}
     expected = "unknown feature: `doesnt_exist`"
-    plugin.handle(command, :ctx).should eq MessageStub.new(5, expected)
+    plugin.handle(payload, ctx).should eq MessageStub.new(5, expected)
   end
 end
