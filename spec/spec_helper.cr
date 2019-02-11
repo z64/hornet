@@ -20,7 +20,7 @@ class MockClient
     block
   end
 
-  def on_message_create(_middleware, &block : MessageStub, Symbol ->)
+  def on_message_create(*middleware, &block : MessageStub, Discord::Context ->)
     block
   end
 
