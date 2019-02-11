@@ -69,25 +69,6 @@ describe Hornet::CARCIN do
   client = MockClient.new
   plugin.register_on(client)
 
-  it "#parse_request" do
-    valid_request = <<-MESSAGE
-      ```cr
-      foo
-      ```
-      MESSAGE
-    plugin.parse_request?(valid_request).should eq({Hornet::CARCIN::LANGS["cr"], "foo\n"})
-
-    unknown_lang = <<-MESSAGE
-      ```lua
-      foo
-      ```
-      MESSAGE
-    plugin.parse_request?(unknown_lang).should eq({"lua", "foo\n"})
-
-    invalid_request = "foo"
-    plugin.parse_request?(invalid_request).should eq(nil)
-  end
-
   example_response = Hornet::CARCIN::Response.new(
     id: "id",
     code: "code",
@@ -102,7 +83,8 @@ describe Hornet::CARCIN do
     version: "version")
 
   it "processes succesful request (STDOUT)" do
-    command = MessageStub.new(1, <<-MESSAGE)
+    payload = MessageStub.new(1, <<-MESSAGE)
+      h>eval
       ```cr
       puts "hello world"
       ```
@@ -112,7 +94,9 @@ describe Hornet::CARCIN do
     response.stdout = "stdout"
     response.exit_code = 0
     plugin.loaded_response = response
-    result = plugin.handle(command, :ctx)
+
+    ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("eval"))}
+    result = plugin.handle(payload, ctx)
 
     expected_embed = Discord::Embed.new(
       title: "View on carc.in",
@@ -127,7 +111,8 @@ describe Hornet::CARCIN do
   end
 
   it "processes succesful request (STDERR)" do
-    command = MessageStub.new(1, <<-MESSAGE)
+    payload = MessageStub.new(1, <<-MESSAGE)
+      h>eval
       ```cr
       puts "hello world"
       ```
@@ -137,7 +122,9 @@ describe Hornet::CARCIN do
     response.stderr = "stderr"
     response.exit_code = 1
     plugin.loaded_response = response
-    result = plugin.handle(command, :ctx)
+
+    ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("eval"))}
+    result = plugin.handle(payload, ctx)
 
     expected_embed = Discord::Embed.new(
       title: "View on carc.in",
@@ -152,7 +139,8 @@ describe Hornet::CARCIN do
   end
 
   it "processes succesful request (STDOUT and STDERR)" do
-    command = MessageStub.new(1, <<-MESSAGE)
+    payload = MessageStub.new(1, <<-MESSAGE)
+      h>eval
       ```cr
       puts "hello world"
       ```
@@ -163,7 +151,9 @@ describe Hornet::CARCIN do
     response.stdout = "stdout"
     response.exit_code = 1
     plugin.loaded_response = response
-    result = plugin.handle(command, :ctx)
+
+    ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("eval"))}
+    result = plugin.handle(payload, ctx)
 
     expected_embed = Discord::Embed.new(
       title: "View on carc.in",
@@ -183,7 +173,8 @@ describe Hornet::CARCIN do
   end
 
   it "doesn't process unknown language" do
-    command = MessageStub.new(1, <<-MESSAGE)
+    payload = MessageStub.new(1, <<-MESSAGE)
+      h>eval
       ```lol
       HAI
       CAN HAS STDIO?
@@ -191,15 +182,17 @@ describe Hornet::CARCIN do
       KTHXBYE
       ```
       MESSAGE
-    response = plugin.handle(command, :ctx)
+    ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("eval"))}
+    result = plugin.handle(payload, ctx)
     expected = MessageStub.new(1, "unsupported language: `lol`")
-    response.should eq expected
+    result.should eq expected
   end
 
   it "doesn't process bad format" do
-    command = MessageStub.new(1, "foo")
-    response = plugin.handle(command, :ctx)
-    expected = MessageStub.new(1, "invalid syntax, must match: `#{Hornet::CARCIN::CODE_BLOCK}`")
-    response.should eq expected
+    payload = MessageStub.new(1, "h>eval foo")
+    ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("eval"))}
+    expect_raises(Hornet::CommandParser::Argument::Error, "could not find a valid code block in your message") do
+      plugin.handle(payload, ctx)
+    end
   end
 end

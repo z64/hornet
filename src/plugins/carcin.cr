@@ -1,64 +1,50 @@
-@[Discord::Plugin::Options(middleware: {DiscordMiddleware::Error.new("error: `%exception%`"),
-                                        DiscordMiddleware::Prefix.new("<@#{Hornet::CLIENT_ID}> eval"),
-                                        Hornet::Flipper.new("carcin")})]
+@[Discord::Plugin::Options(middleware: DiscordMiddleware::Error.new("error: `%exception%`"))]
 class Hornet::CARCIN
   include Discord::Plugin
 
-  @[Discord::Handler(event: :message_create)]
-  def handle(payload, _ctx)
-    if parsed = parse_request?(payload.content)
-      lang, code = parsed
+  @[Discord::Handler(event: :message_create, middleware: {Hornet::CommandSpec.new("eval", "eval (code block with language: #{LANGS.keys.join(", ")})"),
+                                                          Hornet::Flipper.new("carcin")})]
+  def handle(payload, ctx)
+    args = ctx[Hornet::CommandParser::ParsedCommand]
 
-      if lang.is_a?(String)
-        reply = client.create_message(
-          payload.channel_id,
-          "unsupported language: `#{lang}`")
-        return reply
+    # FIXME: codeblock extraction needs to move to Parsed command, as a codeblock
+    #        will never parse as a single argument.
+    codeblock = Hornet::CommandParser::Argument.new(payload.content).codeblock
+
+    language_spec = LANGS[codeblock.language]?
+    return client.create_message(payload.channel_id, "unsupported language: `#{codeblock.language}`") unless language_spec
+
+    client.trigger_typing_indicator(payload.channel_id)
+    response = execute(RunRequest.new(language_spec[0], language_spec[1], codeblock.content))
+    footer = Discord::EmbedFooter.new(text: "#{response.language} #{response.version} (exit code #{response.exit_code})")
+    embed = Discord::Embed.new(title: "View on carc.in", url: response.html_url, footer: footer)
+
+    stdout = !response.stdout.empty?
+    stderr = !response.stderr.empty?
+
+    content = String.build do |string|
+      string << "**stdout**\n" if stdout && stderr
+
+      if stdout
+        string << "```\n"
+        string << response.stdout
+        string << "\n```"
+        string << '\n' if stderr
       end
 
-      client.trigger_typing_indicator(payload.channel_id)
-      response = execute(RunRequest.new(lang[0], lang[1], code))
-      footer = Discord::EmbedFooter.new(text: "#{response.language} #{response.version} (exit code #{response.exit_code})")
-      embed = Discord::Embed.new(title: "View on carc.in", url: response.html_url, footer: footer)
+      string << "**stderr**\n" if stdout && stderr
 
-      stdout = !response.stdout.empty?
-      stderr = !response.stderr.empty?
-
-      content = String.build do |string|
-        string << "**stdout**\n" if stdout && stderr
-
-        if stdout
-          string << "```\n"
-          string << response.stdout
-          string << "\n```"
-          string << '\n' if stderr
-        end
-
-        string << "**stderr**\n" if stdout && stderr
-
-        if stderr
-          string << "```\n"
-          string << response.stderr
-          string << "\n```"
-        end
+      if stderr
+        string << "```\n"
+        string << response.stderr
+        string << "\n```"
       end
-
-      if content.size < 2000
-        client.create_message(payload.channel_id, content, embed)
-      else
-        client.create_message(payload.channel_id, "message too long (#{content.size} / 2000)")
-      end
-    else
-      client.create_message(
-        payload.channel_id,
-        "invalid syntax, must match: `#{CODE_BLOCK}`")
     end
-  end
 
-  def parse_request?(content : String)
-    if match = CODE_BLOCK.match(content)
-      _, requested_lang, code = match
-      {LANGS[requested_lang]? || requested_lang, code}
+    if content.size < 2000
+      client.create_message(payload.channel_id, content, embed)
+    else
+      client.create_message(payload.channel_id, "message too long (#{content.size} / 2000)")
     end
   end
 
@@ -70,8 +56,6 @@ class Hornet::CARCIN
 
   CARCIN_URL = "https://carc.in"
 
-  CODE_BLOCK = /```([a-zA-Z]+)\n([\s\S]+?)```/i
-
   CARCIN_HEADERS = HTTP::Headers{
     "Accept"           => "application/json",
     "Content-Type"     => "application/json; charset=utf-8",
@@ -81,10 +65,10 @@ class Hornet::CARCIN
   }
 
   LANGS = {
-    "crystal" => {"crystal", "0.27.0"},
-    "cr"      => {"crystal", "0.27.0"},
-    "ruby"    => {"ruby", "2.4.1"},
-    "rb"      => {"ruby", "2.4.1"},
+    "crystal" => {"crystal", "0.27.2"},
+    "cr"      => {"crystal", "0.27.2"},
+    "ruby"    => {"ruby", "2.6.0"},
+    "rb"      => {"ruby", "2.6.0"},
     "c"       => {"gcc", "6.3.1"},
   }
 
