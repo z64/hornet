@@ -9,7 +9,9 @@ describe Hornet::Flipper do
   bar_flipper = Hornet::Flipper.new("bar")
 
   it "stores instanced features" do
-    Hornet::Flipper.features.should eq ["foo", "bar"]
+    {"foo", "bar"}.each do |feature|
+      Hornet::Flipper.features.includes?(feature).should be_true
+    end
   end
 
   it "enables features per guild" do
