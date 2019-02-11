@@ -1,6 +1,4 @@
-@[Discord::Plugin::Options(middleware: {DiscordMiddleware::Error.new("error: `%exception%`"),
-                                        DiscordMiddleware::Prefix.new("<@#{CLIENT_ID}> shibe"),
-                                        Hornet::Flipper.new("shibe")})]
+@[Discord::Plugin::Options(middleware: DiscordMiddleware::Error.new("error: `%exception%`"))]
 class Hornet::Shibe
   include Discord::Plugin
 
@@ -21,7 +19,8 @@ class Hornet::Shibe
     Array(String).from_json(response.body)
   end
 
-  @[Discord::Handler(event: :message_create)]
+  @[Discord::Handler(event: :message_create, middleware: {Hornet::CommandSpec.new("shibe", "shibe", max_args: 0),
+                                                          Hornet::Flipper.new("shibe")})]
   def handle(payload, _ctx)
     url = next_url
     embed = Discord::Embed.new(title: "link", url: url,
