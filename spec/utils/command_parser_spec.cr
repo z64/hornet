@@ -50,7 +50,7 @@ describe Hornet::CommandParser::Argument do
   it_casts("to_f", "1", 1.0, %("" is not a valid float))
   it_casts("to_bool", "true", true, %("" is not a valid bool (true/false, yes/no)))
   it_casts("to_bool", "false", false, %("" is not a valid bool (true/false, yes/no)))
-  it_casts("to_snowflake", "1", Discord::Snowflake.new(1), %("" is not a valid snowflake))
+  it_casts("to_snowflake", "1", Discord::Snowflake.new(1_u64), %("" is not a valid snowflake))
 
   it_casts("codeblock", <<-END, Hornet::CommandParser::CodeBlock.new("cr", "content"), "could not find a valid code block in your message")
   outer content
