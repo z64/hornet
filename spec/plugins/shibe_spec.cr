@@ -9,8 +9,8 @@ class Hornet::Shibe
     ["fizz", "buzz"],
   ]
 
-  def fetch_urls
-    @urls = STUB_URLS.shift
+  def fetch_urls(kind)
+    @urls[kind] = STUB_URLS.shift
   end
 end
 
@@ -21,12 +21,12 @@ describe Hornet::Shibe do
 
   it "responds with the next URL" do
     {"foo", "bar", "fizz", "buzz"}.each do |expected|
-      response = plugin.handle(MessageStub.new(1, "message"), Discord::Context.new)
+      response = plugin.shibe(MessageStub.new(1, "message"), Discord::Context.new)
       response.embed.image.try &.url.should eq expected
     end
 
     expect_raises(Exception) do
-      plugin.handle(MessageStub.new(1, "message"), Discord::Context.new)
+      plugin.shibe(MessageStub.new(1, "message"), Discord::Context.new)
     end
   end
 end
