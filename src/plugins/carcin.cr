@@ -41,11 +41,15 @@ class Hornet::CARCIN
       end
     end
 
-    if content.size < 2000
-      client.create_message(payload.channel_id, content, embed)
-    else
-      client.create_message(payload.channel_id, "message too long (#{content.size} / 2000)")
-    end
+    reply = case content.size
+            when 0
+              "(there was no output)"
+            when .> 2000
+              "message too long (#{content.size} / 2000)"
+            else
+              content
+            end
+    client.create_message(payload.channel_id, reply, embed)
   end
 
   def execute(run_request : RunRequest)

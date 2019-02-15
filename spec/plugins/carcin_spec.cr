@@ -172,6 +172,33 @@ describe Hornet::CARCIN do
     result.should eq expected
   end
 
+  it "processes succesful request (no output)" do
+    payload = MessageStub.new(1, <<-MESSAGE)
+      h>eval
+      ```cr
+      1 + 1
+      ```
+      MESSAGE
+
+    response = example_response.dup
+    response.stderr = ""
+    response.stdout = ""
+    response.exit_code = 0
+    plugin.loaded_response = response
+
+    ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("eval"))}
+    result = plugin.handle(payload, ctx)
+
+    expected_embed = Discord::Embed.new(
+      title: "View on carc.in",
+      url: "html url",
+      footer: Discord::EmbedFooter.new(text: "language version (exit code 0)"))
+    expected = MessageWithEmbedStub.new(1, <<-MESSAGE, expected_embed)
+      (there was no output)
+      MESSAGE
+    result.should eq expected
+  end
+
   it "doesn't process unknown language" do
     payload = MessageStub.new(1, <<-MESSAGE)
       h>eval
