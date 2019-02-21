@@ -21,12 +21,12 @@ describe Hornet::Shibe do
 
   it "responds with the next URL" do
     {"foo", "bar", "fizz", "buzz"}.each do |expected|
-      response = plugin.shibe(MessageStub.new(1, "message"), Discord::Context.new)
+      response = plugin.shibe(MessageStub.new(1, 2, "message"), Discord::Context.new)
       response.embed.image.try &.url.should eq expected
     end
 
     expect_raises(Exception) do
-      plugin.shibe(MessageStub.new(1, "message"), Discord::Context.new)
+      plugin.shibe(MessageStub.new(1, 2, "message"), Discord::Context.new)
     end
   end
 end

@@ -18,7 +18,7 @@ describe Hornet::CommandSpec do
     ctx = ContextWithClient.new(client)
     spec = Hornet::CommandSpec.new("foo", "usage")
     {"h>foo", "h>    foo"}.each do |content|
-      payload = MessageStub.new(1_u64, content)
+      payload = MessageStub.new(1, 1, content)
       called = false
       spec.call(payload, ctx) { called = true }
       called.should be_true
@@ -30,7 +30,7 @@ describe Hornet::CommandSpec do
     ctx = ContextWithClient.new(client)
     spec = Hornet::CommandSpec.new("foo", "usage")
     {"foo", "h>    bar", ""}.each do |content|
-      payload = MessageStub.new(1_u64, content)
+      payload = MessageStub.new(1, 1, content)
       called = false
       spec.call(payload, ctx) { called = true }
       called.should be_false
@@ -41,12 +41,12 @@ describe Hornet::CommandSpec do
     client = MockClient.new
     ctx = ContextWithClient.new(client)
     spec = Hornet::CommandSpec.new("foo", "usage", 2)
-    payload = MessageStub.new(1_u64, "h>foo 1")
+    payload = MessageStub.new(1, 1, "h>foo 1")
 
     called = false
     response = spec.call(payload, ctx) { called = true }
     called.should be_false
-    response.should eq MessageStub.new(1_u64, <<-MESSAGE)
+    response.should eq MessageStub.new(1, 1, <<-MESSAGE)
     `<error>` too few arguments (1 given, minimum: 2)
     `<usage>` usage
     MESSAGE
@@ -56,12 +56,12 @@ describe Hornet::CommandSpec do
     client = MockClient.new
     ctx = ContextWithClient.new(client)
     spec = Hornet::CommandSpec.new("foo", "usage", nil, 2)
-    payload = MessageStub.new(1_u64, "h>foo 1 2 3")
+    payload = MessageStub.new(1, 1, "h>foo 1 2 3")
 
     called = false
     response = spec.call(payload, ctx) { called = true }
     called.should be_false
-    response.should eq MessageStub.new(1_u64, <<-MESSAGE)
+    response.should eq MessageStub.new(1, 1, <<-MESSAGE)
     `<error>` too many arguments (3 given, maximum: 2)
     `<usage>` usage
     MESSAGE
@@ -71,12 +71,12 @@ describe Hornet::CommandSpec do
     client = MockClient.new
     ctx = ContextWithClient.new(client)
     spec = Hornet::CommandSpec.new("foo", "usage")
-    payload = MessageStub.new(1_u64, "h>foo")
+    payload = MessageStub.new(1, 1, "h>foo")
 
     response = spec.call(payload, ctx) do
       raise Hornet::CommandParser::Argument::Error.new("reason")
     end
-    response.should eq MessageStub.new(1_u64, <<-MESSAGE)
+    response.should eq MessageStub.new(1, 1, <<-MESSAGE)
     `<error>` reason
     `<usage>` usage
     MESSAGE
@@ -84,7 +84,7 @@ describe Hornet::CommandSpec do
     response = spec.call(payload, ctx) do
       raise Hornet::CommandParser::ParsedCommand::Error.new("reason")
     end
-    response.should eq MessageStub.new(1_u64, <<-MESSAGE)
+    response.should eq MessageStub.new(1, 1, <<-MESSAGE)
     `<error>` reason
     `<usage>` usage
     MESSAGE

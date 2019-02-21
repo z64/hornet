@@ -83,7 +83,7 @@ describe Hornet::CARCIN do
     version: "version")
 
   it "processes succesful request (STDOUT)" do
-    payload = MessageStub.new(1, <<-MESSAGE)
+    payload = MessageStub.new(1, 1, <<-MESSAGE)
       h>eval
       ```cr
       puts "hello world"
@@ -102,7 +102,7 @@ describe Hornet::CARCIN do
       title: "View on carc.in",
       url: "html url",
       footer: Discord::EmbedFooter.new(text: "language version (exit code 0)"))
-    expected = MessageWithEmbedStub.new(1, <<-MESSAGE, expected_embed)
+    expected = MessageWithEmbedStub.new(1, 1, <<-MESSAGE, expected_embed)
       ```
       stdout
       ```
@@ -111,7 +111,7 @@ describe Hornet::CARCIN do
   end
 
   it "processes succesful request (STDERR)" do
-    payload = MessageStub.new(1, <<-MESSAGE)
+    payload = MessageStub.new(1, 1, <<-MESSAGE)
       h>eval
       ```cr
       puts "hello world"
@@ -130,7 +130,7 @@ describe Hornet::CARCIN do
       title: "View on carc.in",
       url: "html url",
       footer: Discord::EmbedFooter.new(text: "language version (exit code 1)"))
-    expected = MessageWithEmbedStub.new(1, <<-MESSAGE, expected_embed)
+    expected = MessageWithEmbedStub.new(1, 1, <<-MESSAGE, expected_embed)
       ```
       stderr
       ```
@@ -139,7 +139,7 @@ describe Hornet::CARCIN do
   end
 
   it "processes succesful request (STDOUT and STDERR)" do
-    payload = MessageStub.new(1, <<-MESSAGE)
+    payload = MessageStub.new(1, 1, <<-MESSAGE)
       h>eval
       ```cr
       puts "hello world"
@@ -159,7 +159,7 @@ describe Hornet::CARCIN do
       title: "View on carc.in",
       url: "html url",
       footer: Discord::EmbedFooter.new(text: "language version (exit code 1)"))
-    expected = MessageWithEmbedStub.new(1, <<-MESSAGE, expected_embed)
+    expected = MessageWithEmbedStub.new(1, 1, <<-MESSAGE, expected_embed)
       **stdout**
       ```
       stdout
@@ -173,7 +173,7 @@ describe Hornet::CARCIN do
   end
 
   it "doesn't process unknown language" do
-    payload = MessageStub.new(1, <<-MESSAGE)
+    payload = MessageStub.new(1, 1, <<-MESSAGE)
       h>eval
       ```lol
       HAI
@@ -184,12 +184,12 @@ describe Hornet::CARCIN do
       MESSAGE
     ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("eval"))}
     result = plugin.handle(payload, ctx)
-    expected = MessageStub.new(1, "unsupported language: `lol`")
+    expected = MessageStub.new(1, 1, "unsupported language: `lol`")
     result.should eq expected
   end
 
   it "doesn't process bad format" do
-    payload = MessageStub.new(1, "h>eval foo")
+    payload = MessageStub.new(1, 1, "h>eval foo")
     ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("eval"))}
     expect_raises(Hornet::CommandParser::Argument::Error, "could not find a valid code block in your message") do
       plugin.handle(payload, ctx)

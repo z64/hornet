@@ -29,7 +29,7 @@ describe Hornet::FlipperManager do
   plugin.register_on(client)
 
   it "lists features" do
-    payload = MessageStub.new(2, "flipper list")
+    payload = MessageStub.new(2, 1, "flipper list")
     ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("flipper"))}
     expected = <<-MESSAGE
       available features:
@@ -37,30 +37,30 @@ describe Hornet::FlipperManager do
       #{plugin.features}
       ```
       MESSAGE
-    plugin.handle(payload, ctx).should eq MessageStub.new(2, expected)
+    plugin.handle(payload, ctx).should eq MessageStub.new(2, 1, expected)
     plugin.last_call.should eq :list
   end
 
   it "enables features" do
-    payload = MessageStub.new(3, "flipper enable foo 123")
+    payload = MessageStub.new(3, 1, "flipper enable foo 123")
     ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("flipper"))}
     expected = "enabled `foo` in `123`"
-    plugin.handle(payload, ctx).should eq MessageStub.new(3, expected)
+    plugin.handle(payload, ctx).should eq MessageStub.new(3, 1, expected)
     plugin.last_call.should eq({:enable, "foo", 123_u64})
   end
 
   it "disables features" do
-    payload = MessageStub.new(4, "flipper disable foo 123")
+    payload = MessageStub.new(4, 1, "flipper disable foo 123")
     ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("flipper"))}
     expected = "disabled `foo` in `123`"
-    plugin.handle(payload, ctx).should eq MessageStub.new(4, expected)
+    plugin.handle(payload, ctx).should eq MessageStub.new(4, 1, expected)
     plugin.last_call.should eq({:disable, "foo", 123_u64})
   end
 
   it "doesn't process unknown features" do
-    payload = MessageStub.new(5, "flipper enable doesnt_exist 1234")
+    payload = MessageStub.new(5, 1, "flipper enable doesnt_exist 1234")
     ctx = {Hornet::CommandParser::ParsedCommand => Hornet::CommandParser.parse(payload.content.lchop("flipper"))}
     expected = "unknown feature: `doesnt_exist`"
-    plugin.handle(payload, ctx).should eq MessageStub.new(5, expected)
+    plugin.handle(payload, ctx).should eq MessageStub.new(5, 1, expected)
   end
 end

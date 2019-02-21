@@ -32,13 +32,13 @@ describe Hornet::Flipper do
     ctx = {Discord::Client => :client}
 
     foo_called = false
-    foo_flipper.call(MessageStub.new(1, "content"), ctx) do
+    foo_flipper.call(MessageStub.new(1, 2, "content"), ctx) do
       foo_called = true
     end
     foo_called.should be_true
 
     bar_called = false
-    bar_flipper.call(MessageStub.new(1, "content"), ctx) do
+    bar_flipper.call(MessageStub.new(1, 2, "content"), ctx) do
       bar_called = true
     end
     bar_called.should be_false
