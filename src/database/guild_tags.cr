@@ -34,7 +34,8 @@ module Hornet::GuildTags
         ON CONFLICT ON CONSTRAINT guild_tags_guild_id_name_key DO UPDATE
           SET owner_id          = $2,
               content           = $4,
-              content_sanitized = $5
+              content_sanitized = $5,
+              created_at        = now()
         WHERE tag.guild_id      = $1
           AND tag.name          = $3
           AND tag.owner_id IS NULL
@@ -52,18 +53,28 @@ module Hornet::GuildTags
     tag_created
   end
 
-  def self.get_tag(guild_id : Discord::Snowflake, name : String)
-    DB.query_one?(<<-SQL, guild_id, name, as: Tag)
-      SELECT guild_id, owner_id, name, locked, content, content_sanitized, times_used
-        FROM guild_tags
-       WHERE guild_id = $1
-         AND name     = $2
-      SQL
+  def self.get_tag(guild_id : Discord::Snowflake, name : String, use : Bool = false)
+    if use
+      DB.query_one?(<<-SQL, guild_id, name, as: Tag)
+        UPDATE guild_tags
+           SET times_used = times_used + 1
+         WHERE guild_id = $1
+           AND name     = $2
+        RETURNING guild_id, owner_id, created_at, name, locked, content, content_sanitized, times_used
+        SQL
+    else
+      DB.query_one?(<<-SQL, guild_id, name, as: Tag)
+        SELECT guild_id, owner_id, created_at, name, locked, content, content_sanitized, times_used
+          FROM guild_tags
+         WHERE guild_id = $1
+           AND name     = $2
+        SQL
+    end
   end
 
   def self.get_user_tags(guild_id : Discord::Snowflake, user_id : Discord::Snowflake)
     DB.query_all(<<-SQL, guild_id, user_id, as: Tag)
-      SELECT guild_id, owner_id, name, locked, content, content_sanitized, times_used
+      SELECT guild_id, owner_id, created_at, name, locked, content, content_sanitized, times_used
         FROM guild_tags
        WHERE guild_id = $1
          AND owner_id = $2
@@ -73,7 +84,7 @@ module Hornet::GuildTags
 
   def self.get_guild_tags(guild_id : Discord::Snowflake)
     DB.query_all(<<-SQL, guild_id, as: Tag)
-      SELECT guild_id, owner_id, name, locked, content, content_sanitized, times_used
+      SELECT guild_id, owner_id, created_at, name, locked, content, content_sanitized, times_used
         FROM guild_tags
        WHERE guild_id = $1
        ORDER BY name
@@ -91,11 +102,12 @@ module Hornet::GuildTags
            SET content           = $3,
                content_sanitized = $4
          WHERE (guild_id = $1
-            AND name     = $2
-            AND owner_id = $5)
+           AND  name     = $2
+           AND  owner_id = $5)
             OR (guild_id = $1
            AND  name     = $2
-           AND  locked   = false)
+           AND  locked   = false
+           AND  owner_id IS NOT NULL)
         RETURNING tag_id
         SQL
 
@@ -198,13 +210,14 @@ module Hornet::GuildTags
     tag_deleted = false
     DB.transaction do |tx|
       db = tx.connection
-      tag_id = db.query_one?(<<-SQL, guild_id, name, as: Int32)
+      tag_id = db.query_one?(<<-SQL, guild_id, name, authority, as: Int32)
         UPDATE guild_tags
            SET owner_id          = null,
                content           = null,
                content_sanitized = null
          WHERE guild_id = $1
            AND name     = $2
+           AND owner_id = $3
         RETURNING tag_id
         SQL
 
@@ -222,7 +235,7 @@ module Hornet::GuildTags
   def self.audit_tag(guild_id : Discord::Snowflake, name : String,
                      limit : Int32 = 5)
     DB.query_all(<<-SQL, guild_id, name, limit, as: AuditLogEntry)
-      SELECT tag.guild_id, tag.name,
+      SELECT tag.guild_id AS tag_guild_id, tag.name AS tag_name, tag.created_at AS tag_created_at,
              entry.action::text, entry.action_time, entry.action_author_id, entry.action_details
         FROM guild_tags_audit_logs AS entry
         JOIN guild_tags AS tag
@@ -238,6 +251,7 @@ module Hornet::GuildTags
     DB.mapping(
       guild_id: {type: Discord::Snowflake, converter: CustomDBType(Discord::Snowflake, Int64)},
       owner_id: {type: Discord::Snowflake?, converter: MaybeCustomDBType(Discord::Snowflake, Int64)},
+      created_at: Time,
       name: String,
       locked: Bool,
       content: String?,
@@ -269,8 +283,9 @@ module Hornet::GuildTags
 
   struct AuditLogEntry
     DB.mapping(
-      guild_id: {type: Discord::Snowflake, converter: CustomDBType(Discord::Snowflake, Int64)},
-      name: String,
+      tag_guild_id: {type: Discord::Snowflake, converter: CustomDBType(Discord::Snowflake, Int64)},
+      tag_name: String,
+      tag_created_at: Time,
       action: {type: AuditLogAction, converter: CustomDBType(AuditLogAction, String)},
       action_time: Time,
       action_author_id: {type: Discord::Snowflake, converter: CustomDBType(Discord::Snowflake, Int64)},

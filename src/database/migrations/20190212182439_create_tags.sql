@@ -5,6 +5,7 @@ CREATE TABLE guild_tags(
   tag_id            SERIAL PRIMARY KEY,
   guild_id          BIGINT  NOT NULL,
   owner_id          BIGINT,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
   name              TEXT    NOT NULL,
   locked            BOOL    NOT NULL DEFAULT true,
   content           TEXT,
@@ -29,12 +30,12 @@ CREATE TYPE tags_action AS ENUM(
 );
 
 CREATE TABLE guild_tags_audit_logs(
-  audit_id            SERIAL      PRIMARY KEY,
-  guild_tag_id        INTEGER     NOT NULL REFERENCES guild_tags (tag_id),
-  action              tags_action NOT NULL,
-  action_time         TIMESTAMPTZ NOT NULL DEFAULT now(),
-  action_author_id    BIGINT      NOT NULL,
-  action_details      JSONB       NOT NULL DEFAULT '[]'::jsonb
+  audit_id         SERIAL      PRIMARY KEY,
+  guild_tag_id     INTEGER     NOT NULL REFERENCES guild_tags (tag_id),
+  action           tags_action NOT NULL,
+  action_time      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  action_author_id BIGINT      NOT NULL,
+  action_details   JSONB       NOT NULL DEFAULT '[]'::jsonb
 );
 
 COMMIT;
