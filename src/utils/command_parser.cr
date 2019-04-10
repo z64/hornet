@@ -43,7 +43,7 @@ struct Hornet::CommandParser
       case @raw
       when "true", "yes", "yep", "yeet", "y", "t", "on", "enable"
         true
-      when "false", "no", "nope", "n", "f", "off", "disable"
+      when "false", "no", "nope", "yeetn't", "n", "f", "off", "disable"
         false
       else
         nil
